@@ -1,50 +1,85 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: N/A (template) -> 1.0.0
+- Modified principles:
+  - N/A -> I. Simplicity First
+  - N/A -> II. Cloudflare-Only Source of Truth
+  - N/A -> III. Deterministic Downtime Event Logic
+  - N/A -> IV. Explainable Insights & Suggestions
+  - N/A -> V. Reliable Ingestion & Traceability
+- Added sections: Scope & Data Governance; Development Workflow & Quality Gates
+- Removed sections: None
+- Templates requiring updates:
+  - [updated] .specify/templates/plan-template.md
+  - [updated] .specify/templates/spec-template.md
+  - [updated] .specify/templates/tasks-template.md
+- Follow-up TODOs: None
+-->
+# Cloudflare Status Early Warning System Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Simplicity First
+We MUST ship the smallest useful feature set: ingest Cloudflare status data,
+count downtime events, compute frequency, surface insights, and suggest
+solutions. Anything beyond this baseline requires explicit justification and a
+measurable benefit.
+Rationale: Tight scope enables fast, low-risk iteration.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Cloudflare-Only Source of Truth
+We MUST only ingest from Cloudflare RSS feeds and Cloudflare public APIs. No
+scraping, private endpoints, or third-party aggregators without a constitution
+amendment. Raw payloads and fetch metadata (timestamp, source, status) MUST be
+stored before normalization.
+Rationale: Provenance and repeatability depend on stable, published interfaces.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Deterministic Downtime Event Logic
+Downtime events MUST have an explicit, documented definition (state transitions,
+duration thresholds, dedupe rules, and counting windows). Event counts and
+frequencies MUST be reproducible from recorded data. Changes to event logic MUST
+be versioned with migration notes.
+Rationale: Ambiguous metrics erode trust in early warnings.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Explainable Insights & Suggestions
+Insights and suggested solutions MUST be traceable to specific events or
+aggregates and labeled as heuristic. Avoid opaque or ML-only conclusions unless
+the underlying evidence is documented and reviewable.
+Rationale: Users need explanations they can validate and act on.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Reliable Ingestion & Traceability
+Ingestion MUST be resilient: rate-limit aware, retry with backoff, and record
+failures. The system MUST expose last successful fetch time and data freshness.
+Logs and metrics MUST be sufficient to audit missed or duplicated events.
+Rationale: Early warning depends on fresh, trustworthy data.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Scope & Data Governance
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- Scope is limited to Cloudflare status monitoring and early warning signals.
+- Raw source payloads are append-only; derived aggregates MUST be reproducible.
+- Timestamps MUST be stored in UTC with source identifiers.
+- Retention, backfill, and purge rules MUST be documented in the plan before
+  release.
+- Requests MUST respect published rate limits and API usage policies.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Development Workflow & Quality Gates
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- Every plan MUST pass the Constitution Check in plan.md before Phase 0.
+- Any change to parsing, downtime logic, or counting MUST include tests or
+  fixtures that prove expected outcomes.
+- New dependencies require explicit justification and must preserve simplicity.
+- Specs MUST document data sources, polling cadence, and event definitions.
+- Releases MUST note any event-logic version changes and migration steps.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- This constitution supersedes other project practices; conflicts require an
+  amendment.
+- Amendments require a PR with rationale, impact analysis, and updates to any
+  affected templates or guidance.
+- Versioning follows semantic rules: MAJOR for breaking governance/principles,
+  MINOR for new principles/sections, PATCH for clarifications.
+- Reviewers MUST verify compliance with each principle before merge.
+- Event-logic changes MUST include migration notes and a backfill plan when
+  historical metrics are affected.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2025-12-22 | **Last Amended**: 2025-12-22

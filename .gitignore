@@ -355,9 +355,10 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-.codex/auth.json
-.codex/config.json
-.codex/config.toml
-.codex/log
-.codex/shell_snapshots
+*/.codex/auth.json
+*/.codex/config.json
+*/.codex/config.toml
+*/.codex/log
+*/.codex/sessions
+*/.codex/shell_snapshots
 .vscode

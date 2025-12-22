@@ -75,6 +75,20 @@
 - What happens when [boundary condition]?
 - How does system handle [error scenario]?
 
+## Data Sources & Event Definitions *(mandatory)*
+
+<!--
+  ACTION REQUIRED: Document the exact data sources and downtime logic so event
+  counts are reproducible and auditable.
+-->
+
+- **Sources**: List Cloudflare RSS feeds and public APIs to ingest.
+- **Cadence**: Polling interval, backoff strategy, and freshness expectations.
+- **Event Definition**: State transitions, thresholds, dedupe rules, and counting
+  windows for downtime events.
+- **Insights/Suggestions**: What insights are generated and how they map to
+  underlying events or aggregates.
+
 ## Requirements *(mandatory)*
 
 <!--

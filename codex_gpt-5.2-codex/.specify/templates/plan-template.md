@@ -31,7 +31,16 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] Simplicity First: scope stays limited to ingestion, event counts,
+  frequency, insights, and suggestions (extras justified).
+- [ ] Cloudflare-Only Source: data sources are limited to Cloudflare RSS feeds
+  and public APIs; raw payloads and fetch metadata are stored.
+- [ ] Deterministic Downtime Logic: event definitions, windows, and dedupe rules
+  are explicit and versioned.
+- [ ] Explainable Insights: insights/suggestions are traceable to events or
+  aggregates and labeled as heuristic.
+- [ ] Reliable Ingestion: rate-limit handling, retries, logging, and freshness
+  signals are planned.
 
 ## Project Structure
 

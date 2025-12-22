@@ -15,10 +15,22 @@ at first, people were counting every single case.<br>
 After that, I couldn't remember the number anymore...<br>
 
 ## What to build?
-- An early warning system could include counting downtime events, assessing frequency, gaining insights, and suggesting solutions.
-- First, let's keep things simple. I'll rely on what I already know and keep the features as simple as possible. I'll get information from Cloudflare's RSS feeds and public APIs to record status data. Then, I'll be notified immediately via a Telegram bot when something goes wrong.
+- An early warning system could include counting downtime events,<br> assessing frequency, gaining insights, and suggesting solutions.
+- First, let's keep things simple. I'll rely on what I already know and<br>
+keep the features as simple as possible. I'll get information from<br> Cloudflare's RSS feeds and public APIs to record status data. <br>
+Then, I'll be notified immediately via a Telegram bot when something goes wrong.
 
 ## Update
 <sub>(Hanoi time)</sub>
 - 2025-12-21: initial idea
-- 2025-12-22: start first tool, using codex
+- 2025-12-22: start using first tool, codex with it's lastest model gpt-5.2-codex<br>
+I will create folders, each folder containing one tool.<br>
+To start using codex in the folder, run the following command:
+```bash
+cd codex_gpt-5.2-codex<br>
+sh start_codex.sh<br>
+```
+Note: if you was asked for relogin, copy your auth info
+```bash
+cp -av ~/.codex/auth.json .codex/
+```
