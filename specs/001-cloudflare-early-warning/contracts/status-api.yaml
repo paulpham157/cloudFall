@@ -1,0 +1,139 @@
+openapi: 3.0.3
+info:
+  title: Cloudflare Early Warning Status API
+  version: 1.0.0
+servers:
+  - url: /v1
+paths:
+  /status/summary:
+    get:
+      summary: Get current status summary
+      responses:
+        '200':
+          description: Current status summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusSummary'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /status/insights:
+    get:
+      summary: Get current insights and suggestions
+      responses:
+        '200':
+          description: Insights list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  insights:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Insight'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /status/trends:
+    get:
+      summary: Compare downtime counts across windows
+      responses:
+        '200':
+          description: Window comparison
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrendResponse'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    StatusSummary:
+      type: object
+      properties:
+        overallStatus:
+          type: string
+          description: Latest overall Cloudflare status
+        lastUpdatedAt:
+          type: string
+          format: date-time
+        freshnessMinutes:
+          type: integer
+        windowCounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/WindowCount'
+        warningActive:
+          type: boolean
+    WindowCount:
+      type: object
+      properties:
+        windowKey:
+          type: string
+          enum: [24h, 7d]
+        count:
+          type: integer
+    Insight:
+      type: object
+      properties:
+        id:
+          type: string
+        windowKey:
+          type: string
+          enum: [24h, 7d]
+        summary:
+          type: string
+        eventIds:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        suggestions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Suggestion'
+    Suggestion:
+      type: object
+      properties:
+        text:
+          type: string
+    TrendResponse:
+      type: object
+      properties:
+        windowCounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/WindowCount'
+        comparison:
+          type: object
+          properties:
+            fromWindow:
+              type: string
+              enum: [24h]
+            toWindow:
+              type: string
+              enum: [7d]
+            changeCount:
+              type: integer
+            changePercent:
+              type: number
+              format: float
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
