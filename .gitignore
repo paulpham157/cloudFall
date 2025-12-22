@@ -360,3 +360,4 @@ __marimo__/
 .codex/config.toml
 .codex/log
 .codex/shell_snapshots
+.vscode
