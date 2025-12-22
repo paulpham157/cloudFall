@@ -355,8 +355,5 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-.codex/auth.json
-.codex/config.json
-.codex/config.toml
-.codex/log
-.codex/shell_snapshots
+../README.md
+README.md
