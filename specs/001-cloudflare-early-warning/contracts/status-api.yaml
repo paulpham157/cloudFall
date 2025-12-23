@@ -2,6 +2,7 @@ openapi: 3.0.3
 info:
   title: Cloudflare Early Warning Status API
   version: 1.0.0
+  description: Internal read-only API for status summary, insights, and trends.
 servers:
   - url: /v1
 paths:

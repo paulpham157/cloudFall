@@ -3,6 +3,7 @@
 Auto-generated from all feature plans. Last updated: 2025-12-22
 
 ## Active Technologies
+- SQLite file (append-only raw payloads + derived tables) (001-cloudflare-early-warning)
 
 - Node.js 20 (ESM) + rss-parser, better-sqlite3 (001-cloudflare-early-warning)
 
@@ -22,6 +23,8 @@ tests/
 Node.js 20 (ESM): Follow standard conventions
 
 ## Recent Changes
+- 001-cloudflare-early-warning: Added Node.js 20 (ESM) + rss-parser, better-sqlite3
+- 001-cloudflare-early-warning: Added Node.js 20 (ESM) + rss-parser, better-sqlite3
 
 - 001-cloudflare-early-warning: Added Node.js 20 (ESM) + rss-parser, better-sqlite3
 

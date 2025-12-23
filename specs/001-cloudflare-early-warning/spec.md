@@ -25,7 +25,7 @@ status and correct counts for the defined time windows.
 
 1. **Given** recent source updates exist, **When** I view the status summary,
    **Then** I see the latest overall status and the current downtime count for the
-   primary time window.
+   primary time window (24-hour).
 2. **Given** no incidents in the last window, **When** I view the summary,
    **Then** the downtime count is zero and no warning is shown.
 
@@ -72,6 +72,7 @@ reported change.
 - How are duplicate or repeated incident updates prevented from inflating counts?
 - What happens when incidents rapidly alternate between degraded and operational?
 - What happens when Telegram bot delivery fails or is unavailable?
+  - Retry with backoff; mark warning failed if retries exhaust (no extra alert).
 
 ## Clarifications
 
@@ -82,18 +83,36 @@ reported change.
 - Q: Which time windows are used? → A: 24-hour and 7-day only.
 - Q: Are thresholds configurable? → A: Fixed thresholds in spec.
 - Q: Are there multiple user roles? → A: Single stakeholder view.
+- Q: What fixed thresholds trigger warnings? → A: 24h=2 incidents; 7d=5 incidents.
+- Q: Which incident statuses count as downtime events? → A: Any non-operational status (including maintenance).
+- Q: How should Telegram delivery failures be handled? → A: Retry with backoff; mark failed if retries exhaust (no extra alert).
+- Q: When is a downtime event considered resolved? → A: When the incident status is “resolved” in source data.
+- Q: Should the HTTP API require authentication? → A: No authentication; internal read-only use.
+- Q: Is there a minimum downtime duration threshold? → A: No; count any non-operational incident regardless of duration.
+- Q: Which auditability metrics must be captured? → A: Ingest success/failure counts, last success time, dedupe count, freshness lag.
+- Q: Which window is considered primary for status summary? → A: 24-hour window.
+- Q: How should auditability metrics be stored? → A: Log-only (no DB persistence).
+- Q: Should retention/backfill/purge rules be explicit? → A: Yes — raw 90 days, aggregates 1 year, backfill 30 days, weekly purge.
 
 ## Data Sources & Event Definitions *(mandatory)*
 
 - **Sources**: Cloudflare status RSS feeds and Cloudflare public status APIs.
 - **Cadence**: Regular polling with backoff on failures; freshness target of no more than
   10 minutes behind the source.
-- **Event Definition**: A downtime event is any distinct Cloudflare incident that indicates
-  service degradation or outage. Each incident is counted once per lifecycle, even if it
-  has multiple updates. Frequency is computed for rolling 24-hour and 7-day windows.
-- **Warning Trigger**: A warning is issued when a downtime count meets or exceeds a fixed
-  threshold within a defined window. Thresholds are fixed in the spec (not configurable
-  per recipient).
+- **Event Definition**: A downtime event is any distinct Cloudflare incident with a
+  non-operational status (including maintenance, degraded performance, partial outage,
+  or major outage). Each incident is counted once per lifecycle, even if it has multiple
+  updates. No minimum duration threshold applies; any non-operational incident counts.
+  Events are considered resolved when the incident status is “resolved” in the source
+  data. Frequency is computed for rolling 24-hour and 7-day windows.
+- **Event Logic Versioning**: Event logic is versioned as v1 for MVP; any future changes
+  must include migration notes and a backfill plan when historical metrics are affected.
+- **Warning Trigger**: A warning is issued when a downtime count meets or exceeds the
+  fixed thresholds within a defined window: 24h ≥ 2 incidents, 7d ≥ 5 incidents.
+  Thresholds are fixed in the spec (not configurable per recipient).
+- **Overall Status Rule**: overallStatus is derived from open incidents using highest-
+  severity precedence: major outage > partial outage > degraded performance >
+  maintenance > operational. If no open incidents exist, overallStatus is "operational".
 - **Insights/Suggestions**: Insights summarize frequency changes and notable incidents;
   suggestions are heuristic and explicitly tied to the underlying events (e.g., review
   provider status updates, validate internal dependencies).
@@ -117,7 +136,15 @@ reported change.
 - **FR-008**: System MUST issue a warning when a downtime count reaches the fixed threshold
   for a defined window.
 - **FR-009**: System MUST deliver warnings via Telegram bot to configured recipients.
-- **FR-010**: System MUST use fixed, documented thresholds for each window.
+- **FR-010**: System MUST use fixed, documented thresholds for each window (24h ≥ 2,
+  7d ≥ 5).
+- **FR-011**: System MUST expose a read-only HTTP API without authentication, intended for
+  internal use only.
+- **FR-012**: System MUST capture auditability metrics: ingest success/failure counts,
+  last successful fetch time, dedupe count, and freshness lag, logged to system logs
+  (not persisted to the database).
+- **FR-013**: System MUST honor Retry-After headers on 429/503 responses and apply
+  exponential backoff (base 500ms, max 3 retries) for retryable failures.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -136,7 +163,9 @@ reported change.
 - The initial scope focuses only on Cloudflare as a data source.
 - Default frequency windows are 24 hours and 7 days.
 - Suggestions are advisory and do not automate actions.
-- Thresholds are fixed per window and not user-configurable.
+- Thresholds are fixed per window (24h ≥ 2, 7d ≥ 5) and not user-configurable.
+- The HTTP API is internal-only and does not require authentication.
+- Retention/backfill/purge rules are explicit: raw payloads 90 days, derived aggregates 1 year, backfill limited to 30 days, weekly purge.
 
 ## Dependencies
 

@@ -87,3 +87,52 @@ consistency before planning and implementation
 
 - [ ] CHK030 Are external dependency failure behaviors specified for Cloudflare sources
   and Telegram delivery? [Dependency, Spec §Dependencies]
+
+---
+
+## Addendum (2025-12-22)
+
+### Requirement Completeness
+
+- [ ] CHK031 Are API endpoint paths and versioning explicitly specified (e.g., /v1) or intentionally deferred? [Completeness, Gap]
+- [ ] CHK032 Are request parameters (if any) for each endpoint documented or explicitly stated as none? [Completeness, Gap]
+- [ ] CHK033 Are pagination or limit requirements defined for the insights list? [Completeness, Gap]
+- [ ] CHK034 Is it specified whether thresholds (24h >= 2, 7d >= 5) are exposed in API responses or intentionally omitted? [Completeness, Gap]
+
+### Requirement Clarity
+
+- [ ] CHK035 Are timestamp formats for API outputs specified (e.g., UTC ISO-8601)? [Clarity, Gap]
+- [ ] CHK036 Is ordering of windowCounts and insights arrays specified (e.g., 24h before 7d, newest first)? [Clarity, Gap]
+- [ ] CHK037 Is the meaning of overallStatus in API outputs explicitly derived from incident statuses including maintenance? [Ambiguity, Spec §Data Sources & Event Definitions; Spec §FR-004]
+- [ ] CHK038 Are insights/suggestions explicitly labeled as heuristic in API outputs (or explicitly excluded)? [Clarity, Spec §Data Sources & Event Definitions; Spec §FR-005]
+
+### Requirement Consistency
+
+- [ ] CHK039 Is the internal, no-auth API stance consistent across requirements and assumptions? [Consistency, Spec §FR-011; Spec §Assumptions]
+- [ ] CHK040 Are fixed thresholds consistently referenced between Clarifications and Warning Trigger requirements? [Consistency, Spec §Clarifications; Spec §Data Sources & Event Definitions; Spec §FR-008]
+
+### Acceptance Criteria Quality
+
+- [ ] CHK041 Do acceptance scenarios for User Stories 1-3 specify measurable API evidence for each outcome (summary/insights/trends)? [Acceptance Criteria, Spec §User Stories]
+- [ ] CHK042 Do success criteria specify observable API fields for freshness and warning states (not just timing targets)? [Measurability, Spec §SC-001; Spec §SC-005; Spec §FR-006]
+
+### Scenario Coverage
+
+- [ ] CHK043 Are requirements defined for API behavior when all incidents are maintenance only (status and counts)? [Coverage, Spec §Data Sources & Event Definitions]
+- [ ] CHK044 Are requirements defined for API behavior when incidents resolve rapidly and roll through window counts? [Coverage, Spec §Edge Cases]
+
+### Edge Case Coverage
+
+- [ ] CHK045 Are requirements defined for API behavior under out-of-order source updates (freshness and lastUpdatedAt semantics)? [Edge Case, Spec §Edge Cases; Spec §FR-006]
+
+### Non-Functional Requirements
+
+- [ ] CHK046 Are logging/metrics requirements for API request handling explicitly specified to support auditability? [Non-Functional, Gap]
+
+### Dependencies & Assumptions
+
+- [ ] CHK047 Are dependency failure behaviors documented in terms of how API freshness/status are affected? [Dependency, Spec §Dependencies; Spec §FR-006]
+
+### Ambiguities & Conflicts
+
+- [ ] CHK048 Is the term "internal read-only API" explicitly defined to avoid conflicts with potential external consumers? [Ambiguity, Spec §FR-011]

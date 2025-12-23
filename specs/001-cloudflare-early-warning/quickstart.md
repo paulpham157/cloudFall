@@ -18,8 +18,10 @@ Set environment variables:
 - `POLL_INTERVAL_SECONDS` (default: 300)
 - `PORT` (default: 3000)
 
-Thresholds and time windows are fixed in the specification (24h and 7d) and are
-not user-configurable.
+Thresholds and time windows are fixed in the specification (24h >= 2, 7d >= 5) and are
+not user-configurable. No minimum duration threshold is applied. The HTTP API is
+internal read-only with no authentication. Auditability metrics are captured via
+ingest logging (success/failure counts, last success time, dedupe count, freshness lag).
 
 ## Run Locally
 
@@ -30,9 +32,9 @@ node src/cli/run-server.js
 
 ## Verify
 
-- Open `GET /v1/status/summary` to confirm current status and counts.
-- Trigger a test ingestion cycle and confirm a Telegram warning message is
-  delivered when thresholds are met.
+- Open `GET /v1/status/summary` to confirm current status, counts, and freshness.
+- Trigger a test ingestion cycle and confirm a Telegram warning message is delivered
+  when thresholds are met.
 
 ## Tests
 

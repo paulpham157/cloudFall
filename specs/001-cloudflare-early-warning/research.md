@@ -22,25 +22,47 @@
   dependency, more complex setup).
 
 ## Decision 4: HTTP API delivery for summaries
-- **Decision**: Expose a minimal HTTP API using Node's built-in `http` module.
-- **Rationale**: Keeps dependencies and surface area small while supporting the
-  required summary/insight/trend endpoints.
-- **Alternatives considered**: Express or Fastify (more dependencies than needed).
+- **Decision**: Expose a minimal HTTP API using Node's built-in `http` module, with no
+  authentication (internal read-only use).
+- **Rationale**: Keeps dependencies and surface area small while supporting the required
+  summary/insight/trend endpoints.
+- **Alternatives considered**: Express or Fastify (more dependencies than needed);
+  adding auth in MVP (unneeded for internal read-only use).
 
 ## Decision 5: Warning delivery channel
-- **Decision**: Deliver warnings via Telegram Bot API over HTTPS.
+- **Decision**: Deliver warnings via Telegram Bot API over HTTPS, with retry/backoff and
+  failure state recorded (no extra failure alert).
 - **Rationale**: Direct HTTPS calls avoid extra dependencies and keep delivery
-  transparent and auditable.
-- **Alternatives considered**: `node-telegram-bot-api` library (additional dependency).
+  transparent and auditable while preventing alert noise on retries.
+- **Alternatives considered**: `node-telegram-bot-api` library (additional dependency);
+  sending failure alerts (risk of alert fatigue).
 
-## Decision 6: Scheduling and retries
-- **Decision**: Use an internal interval loop with backoff on failures.
-- **Rationale**: Matches the 10-minute freshness target and supports rate-limit aware
-  retries without external schedulers.
-- **Alternatives considered**: System cron or queue workers (more ops overhead).
+## Decision 6: Downtime event logic
+- **Decision**: Count any non-operational incident status (including maintenance) as a
+  downtime event. No minimum duration threshold applies. An event is resolved when the
+  incident status is "resolved" in the source data. Dedupe by incident ID across updates.
+- **Rationale**: Aligns with Cloudflare incident lifecycle while keeping counting
+  deterministic and reproducible.
+- **Alternatives considered**: Excluding maintenance; applying a duration threshold;
+  using "operational" as resolution.
 
-## Decision 7: Data retention
-- **Decision**: Retain raw payloads for 90 days and derived aggregates for 1 year.
+## Decision 7: Warning thresholds
+- **Decision**: Fixed thresholds of 24h >= 2 incidents and 7d >= 5 incidents.
+- **Rationale**: Provides early warning sensitivity while avoiding constant alerts for
+  low-volume events.
+- **Alternatives considered**: Lower thresholds (noisy) or higher thresholds (late signal).
+
+## Decision 8: Auditability metrics
+- **Decision**: Capture ingest success/failure counts, last successful fetch time, dedupe
+  count, and freshness lag.
+- **Rationale**: Satisfies constitution traceability requirements without adding heavy
+  observability overhead.
+- **Alternatives considered**: Full tracing or per-source latency histograms (more
+  complexity than needed for MVP).
+
+## Decision 9: Retention, backfill, and purge
+- **Decision**: Retain raw payloads for 90 days and derived aggregates for 1 year; limit
+  backfill to 30 days; run weekly purge.
 - **Rationale**: Balances auditability with storage growth for an MVP.
 - **Alternatives considered**: Indefinite retention (unbounded growth), 30-day retention
   (insufficient for trend analysis).
